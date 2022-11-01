@@ -92,7 +92,16 @@ quants <- function(series) {
 **Plots of the variables with x-lab being 62 periods**
 
 ```{r Plots the variables}
-plot(cars)
+#plot the lagged log values
+GDP <- xts(dataset$`GDP ($Millions)`,dataset$Period)
+GDP_Growth <- xts(100 * log(GDP/lag(GDP)))
+plot(as.zoo(GDP_Growth),
+      col = "steelblue",
+      lwd = 2,
+      ylab = "Logarithm",
+      xlab = "Periods",
+      main = "Uganda's GDP Growth"
+)
 ```
 
 **First level of Analysis** At this level of analysis, the autocorrelation between the different series shall be established then provide the narrative for the results
