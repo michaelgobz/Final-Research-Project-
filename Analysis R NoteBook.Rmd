@@ -1,0 +1,41 @@
+---
+title: "Effects of the FDI on the Economic Growth of Uganda Time series Evidence"
+output: html_notebook
+---
+
+The analysis bases on 4 variables
+
+-   \- FDI stock
+
+-    - FDI Inflow
+
+-   \- FDI Transactions (proxying it using REER)
+
+-   \- FDI other Changes (Proxying it using net Foreign Assets)
+
+-   \- GDP of Uganda
+
+The time period for analysis is 1960 to 2021, with this raw data having missing values we need to correct for the missing values statistically.
+
+Then raw data is in USD and Net foreign assets is in LCUs (local currency Units) which is converted to USD to make it uniform
+
+**Setting The Analysis Environment**
+
+Setup the packages required for analysis and load them
+
+Install them
+```{r install packages}
+```
+Load them into usage
+
+```{r load the packages}
+```
+**Plots of the variables with x-lab being 62 periods**
+
+```{r Plots the variables}
+plot(cars)
+```
+
+**First level of Analysis**
+At this level of analysis, the autocorrelation between the different series shall be established
+then provide the narrative for the results 
