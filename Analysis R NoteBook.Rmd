@@ -56,7 +56,8 @@ library(stats)
 Load the data in from excel
 
 ```{r load the data in data.xlsx}
-dataset <- read_xlsx("data.xlsx",sheet = "Sheet3", col_types= "numeric")
+dataset <- read_xlsx("./data.xlsx",sheet = 3, col_types= "numeric")
+dataset
 ```
 
 Helper functions for Transformations
