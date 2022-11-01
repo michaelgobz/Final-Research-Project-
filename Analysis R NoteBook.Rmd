@@ -30,6 +30,9 @@ Load them into usage
 
 ```{r load the packages}
 ```
+Helper functions for Transformations 
+```{r helper functions}
+```
 **Plots of the variables with x-lab being 62 periods**
 
 ```{r Plots the variables}
@@ -39,3 +42,19 @@ plot(cars)
 **First level of Analysis**
 At this level of analysis, the autocorrelation between the different series shall be established
 then provide the narrative for the results 
+
+```{r ACF and PACF analysis of the series}
+```
+**Testing and modeling using the ADL and testing for Predictability of the Regressors**
+At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger’s Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
+```{r ADL model and test for stationality and Predicatble powers}
+```
+**Fitting and ARIMAX model and Forecast the Default where h = 20**
+
+
+
+
+
+
+
+
