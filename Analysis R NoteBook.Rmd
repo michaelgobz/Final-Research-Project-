@@ -50,8 +50,14 @@ At this level of analysis I shall fit a general regression model with multiple r
 ```{r ADL model and test for stationality and Predicatble powers}
 ```
 **Fitting and ARIMAX model and Forecast the Default where h = 20**
+At this level, an ARIMAX model is fitted on the series to forecast the GDP based on the exogenous independent. The ARIMAX model is an extension of Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model has three parameters namely, p, d and q, where p is the autoregressive term, q is the moving average term and d indicated the series is differenced to make it stationary.
 
+Regressions with non-stationary series are spurious and analyses are not valid. For this work, we test if there is stationarity by applying the Augmented Dickey-Fuller (ADF). Visually examining the autocorrelation function (ACF) and partial autocorrelation function (PACF) combined patterns should reveal some important features at least inconclusively which should help to identify the orders of AR and MA parameters of the model
 
+```{r ARIMAX modeling}
+```
+
+**Narrative**
 
 
 
