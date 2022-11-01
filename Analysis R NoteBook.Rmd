@@ -7,7 +7,7 @@ The analysis bases on 4 variables
 
 -   \- FDI stock
 
--    - FDI Inflow
+-   \- FDI Inflow
 
 -   \- FDI Transactions (proxying it using REER)
 
@@ -21,36 +21,90 @@ Then raw data is in USD and Net foreign assets is in LCUs (local currency Units)
 
 **Setting The Analysis Environment**
 
-Setup the packages required for analysis and load them
+Setup the packages required for analysis and load them requires the Rtools to build some of the packages
+download the binaries from here [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html)
 
 Install them
+
 ```{r install packages}
+install.packages("AER")
+install.packages("dynlm")
+install.packages("forecast")
+install.packages("readxl")
+install.packages("stargazer")
+install.packages("scales")
+install.packages("quantmod")
+install.packages("urca")
+
 ```
+
 Load them into usage
 
 ```{r load the packages}
+library(AER)
+library(dynlm)
+library(forecast)
+library(readxl)
+library(stargazer)
+library(scales)
+library(quantmod)
+library(urca)
+library(stats)
+
 ```
-Helper functions for Transformations 
+
+Load the data in from excel
+
+```{r load the data in data.xlsx}
+dataset <- read_xlsx("data.xlsx",sheet = "Sheet3", col_types= "numeric")
+```
+
+Helper functions for Transformations
+
 ```{r helper functions}
+# compute BIC for AR model objects of class 'dynlm'
+BIC <- function(model) {
+  ssr <- sum(model$residualsˆ2)
+  t <- length(model$residuals)
+  npar <- length(model$coef)
+  return(
+    round(c("p" = npar - 1,
+      "BIC" = log(ssr/t) + npar * log(t)/t,
+      "R2" = summary(model)$r.squared), 4)
+        )
+}
+
+# compute logarithms, annual growth rates and 1st lag of growth rates
+quants <- function(series) {
+    s <- series
+      return(
+        data.frame("Level" = s,
+            "Logarithm" = log(s),
+            "AnnualGrowthRate" = 100 * log(s / lag(s)),
+            "1stLagAnnualGrowthRate" = lag(100 * log(s / lag(s))))
+      )
+}
+
+
 ```
+
 **Plots of the variables with x-lab being 62 periods**
 
 ```{r Plots the variables}
 plot(cars)
 ```
 
-**First level of Analysis**
-At this level of analysis, the autocorrelation between the different series shall be established
-then provide the narrative for the results 
+**First level of Analysis** At this level of analysis, the autocorrelation between the different series shall be established then provide the narrative for the results
 
 ```{r ACF and PACF analysis of the series}
 ```
-**Testing and modeling using the ADL and testing for Predictability of the Regressors**
-At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger’s Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
+
+**Testing and modeling using the ADL and testing for Predictability of the Regressors** At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger's Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
+
 ```{r ADL model and test for stationality and Predicatble powers}
 ```
-**Fitting and ARIMAX model and Forecast the Default where h = 20**
-At this level, an ARIMAX model is fitted on the series to forecast the GDP based on the exogenous independent. The ARIMAX model is an extension of Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model has three parameters namely, p, d and q, where p is the autoregressive term, q is the moving average term and d indicated the series is differenced to make it stationary.
+
+**Fitting and ARIMAX model and Forecast the Default where h = 20** At this level, an ARIMAX model is fitted on the series to forecast the GDP based on the exogenous independent. The ARIMAX model is an extension of Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model has three parameters namely, p, d and q, where p is the autoregressive term, q is the moving average term and d indicated the series is differenced to make it stationary.
 
 Regressions with non-stationary series are spurious and analyses are not valid. For this work, we test if there is stationarity by applying the Augmented Dickey-Fuller (ADF). Visually examining the autocorrelation function (ACF) and partial autocorrelation function (PACF) combined patterns should reveal some important features at least inconclusively which should help to identify the orders of AR and MA parameters of the model
 
@@ -58,9 +112,3 @@ Regressions with non-stationary series are spurious and analyses are not valid. 
 ```
 
 **Narrative**
-
-
-
-
-
-
