@@ -21,8 +21,7 @@ Then raw data is in USD and Net foreign assets is in LCUs (local currency Units)
 
 **Setting The Analysis Environment**
 
-Setup the packages required for analysis and load them requires the Rtools to build some of the packages
-download the binaries from here [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html)
+Setup the packages required for analysis and load them requires the Rtools to build some of the packages download the binaries from here [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html)
 
 Install them
 
@@ -56,7 +55,7 @@ library(stats)
 Load the data in from excel
 
 ```{r load the data in data.xlsx}
-dataset <- read_xlsx("./data.xlsx",sheet = 3, col_types= "numeric")
+dataset <- read_xlsx("./data.xlsx",sheet = 4, col_types= "numeric")
 dataset
 ```
 
@@ -89,18 +88,80 @@ quants <- function(series) {
 
 ```
 
-**Plots of the variables with x-lab being 62 periods**
+**Plots of the variables with x-lab being 1960 to 2021 periods**
 
 ```{r Plots the variables}
 #plot the lagged log values
-GDP <- xts(dataset$`GDP ($Millions)`,dataset$Period)
+GDP <- xts(dataset$`GDP$Millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
 GDP_Growth <- xts(100 * log(GDP/lag(GDP)))
+GDP_Growth
 plot(as.zoo(GDP_Growth),
       col = "steelblue",
       lwd = 2,
       ylab = "Logarithm",
-      xlab = "Periods",
-      main = "Uganda's GDP Growth"
+      xlab = "Period in years",
+      main = "Ugandas GDP Growth"
+)
+```
+**FDI Inflow**
+```{r FDI Inflow }
+# FDI inflow 
+
+FDI_inflow <- xts(dataset$`FDI inflows$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
+FDI_Growth <- xts(100 * log(FDI_inflow/lag(FDI_inflow)))
+FDI_Growth
+plot(as.zoo(FDI_Growth),
+      col = "steelblue",
+      lwd = 2,
+      ylab = "Logarithm",
+      xlab = "Period in years",
+      main = "Ugandas FDI Inflow Growth"
+)
+```
+
+```{r FDI Stock }
+# FDI Stock 
+
+FDI_Stock <- xts(dataset$`FDI Stock$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
+FDI_Stock_Growth <- xts(100 * log(FDI_Stock/lag(FDI_Stock)))
+FDI_Stock_Growth
+plot(as.zoo(FDI_Stock_Growth),
+      col = "steelblue",
+      lwd = 2,
+      ylab = "Logarithm",
+      xlab = "Period in years",
+      main = "Ugandas FDI Stock Growth"
+)
+```
+**Excess of NFA (net Foreign Assets) **
+``` {r Excess of NFA }
+# Excess of NFA 
+
+NFA_d <- xts(dataset$`ExcessNFA$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
+NFA_Growth <- xts(100 * log(NFA_d/lag(NFA_d)))
+NFA_Growth
+plot(as.zoo(NFA_Growth),
+      col = "steelblue",
+      lwd = 2,
+      ylab = "Logarithm",
+      xlab = "Period in years",
+      main = "Ugandas Excess of NFA of GDP Growth"
+)
+```
+
+**REER (Real Effective Exchange Rate) **
+``` {r REER }
+# REER 
+
+REER<- xts(dataset$REER,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
+REER_Growth <- xts(100 * log(REER/lag(REER)))
+REER_Growth
+plot(as.zoo(REER_Growth),
+      col = "steelblue",
+      lwd = 2,
+      ylab = "Logarithm",
+      xlab = "Period in years",
+      main = "Ugandas REER Growth"
 )
 ```
 
