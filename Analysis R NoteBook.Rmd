@@ -251,67 +251,61 @@ pacf(na.omit(FDI_Growth),lag.max = 4, plot= T)
 # GDP
 # FDI_inflow
 # FDI_Stock
-N <- length(REER)
+N <- length(FDI_Stock_Growth)
 N
 
-REER_level <- as.numeric(REER[-1])
-REER_lags <-as.numeric(REER[-N])
+FDI_stock_level <- as.numeric(FDI_Stock_Growth[-1])
+FDI_stock_lags <-as.numeric(FDI_Stock_Growth[-N])
 
 #estimate model
-REER_mod <- lm(REER_level ~ REER_lags)
-REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
+FDI_stock_mod <- lm(FDI_stock_level ~ FDI_stock_lags)
+FDI_stock_armod <- dynlm(ts(FDI_stock_level) ~ L(ts(FDI_stock_level)) + L(ts(FDI_stock_level), 2) + L(ts(FDI_stock_level), 3) + L(ts(FDI_stock_level), 4))
 
 #robust summary
-coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
-coeftest(REER_armod, vcov. = sandwich)
-coeftest(REER_mod, vcov. = vcovHC, type = "HC1")
-coeftest(REER_mod, vcov. = sandwich)
+coeftest(FDI_stock_armod, vcov. = sandwich)
+coeftest(FDI_stock_mod, vcov. = sandwich)
 #AR(2)
-summary(REER_armod)$sigma
-summary(REER_armod)$r.squared
+summary(FDI_stock_armod)$sigma
+summary(FDI_stock_armod)$r.squared
 #AR(1) like ols
-summary(REER_mod)$sigma
-summary(REER_mod)$r.squared
+summary(FDI_stock_mod)$sigma
+summary(FDI_stock_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(REER), lag.max = 4, plot= T)
-pacf(na.omit(REER),lag.max = 4, plot= T)
+acf(na.omit(FDI_Stock_Growth), lag.max = 4, plot= T)
+pacf(na.omit(FDI_Stock_Growth),lag.max = 4, plot= T)
 
 # Use BIC to determine the lags
 ```
 **NFA_spread**
 ```{r NFA_spread ACF and PACF analysis}
 #the data sets
-# REER
 # NFA_d
-# GDP
-# FDI_inflow
-# FDI_Stock
-N <- length(REER)
-N
 
-REER_level <- as.numeric(REER[-1])
-REER_lags <-as.numeric(REER[-N])
+N <- length(NFA_Growth)
+N
+NFA_Growth
+
+NFA_level <- as.numeric(NFA_Growth[-1])
+NFA_lags <-as.numeric(NFA_Growth[-N])
 
 #estimate model
-REER_mod <- lm(REER_level ~ REER_lags)
-REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
+NFA_mod <- lm(NFA_level ~ NFA_lags)
+NFA_armod <- dynlm(ts(NFA_level) ~ L(ts(NFA_level)) + L(ts(NFA_level), 2) + L(ts(NFA_level), 3) + L(ts(NFA_level), 4))
 
 #robust summary
-coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
-coeftest(REER_armod, vcov. = sandwich)
-coeftest(REER_mod, vcov. = vcovHC, type = "HC1")
-coeftest(REER_mod, vcov. = sandwich)
+coeftest(NFA_armod, vcov. = sandwich)
+coeftest(NFA_mod, vcov. = sandwich)
 #AR(2)
-summary(REER_armod)$sigma
-summary(REER_armod)$r.squared
+summary(NFA_armod)$sigma
+summary(NFA_armod)$r.squared
 #AR(1) like ols
-summary(REER_mod)$sigma
-summary(REER_mod)$r.squared
+summary(NFA_mod)$sigma
+summary(NFA_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(REER), lag.max = 4, plot= T)
-pacf(na.omit(REER),lag.max = 4, plot= T)
+acf(na.omit(NFA_Growth), lag.max = 4, plot= T)
+pacf(na.omit(NFA_Growth),lag.max = 4, plot= T)
 
 # Use BIC to determine the lags
 ```
@@ -319,24 +313,19 @@ pacf(na.omit(REER),lag.max = 4, plot= T)
 ```{r REER ACF and PACF analysis }
 #the data sets
 # REER
-# NFA_d
-# GDP
-# FDI_inflow
-# FDI_Stock
-N <- length(REER)
+
+N <- length(REER_Growth)
 N
 
-REER_level <- as.numeric(REER[-1])
-REER_lags <-as.numeric(REER[-N])
+REER_level <- as.numeric(REER_Growth[-1])
+REER_lags <-as.numeric(REER_Growth[-N])
 
 #estimate model
 REER_mod <- lm(REER_level ~ REER_lags)
 REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
 
 #robust summary
-coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
 coeftest(REER_armod, vcov. = sandwich)
-coeftest(REER_mod, vcov. = vcovHC, type = "HC1")
 coeftest(REER_mod, vcov. = sandwich)
 #AR(2)
 summary(REER_armod)$sigma
@@ -346,8 +335,8 @@ summary(REER_mod)$sigma
 summary(REER_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(REER), lag.max = 4, plot= T)
-pacf(na.omit(REER),lag.max = 4, plot= T)
+acf(na.omit(REER_Growth), lag.max = 4, plot= T)
+pacf(na.omit(REER_Growth),lag.max = 4, plot= T)
 
 # Use BIC to determine the lags
 
