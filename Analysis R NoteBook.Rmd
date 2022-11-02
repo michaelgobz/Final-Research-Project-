@@ -170,16 +170,88 @@ plot(as.zoo(REER_Growth),
 )
 ```
 
-**First level of Analysis** At this level of analysis, the autocorrelation between the different series shall be established then provide the narrative for the results
+**First level of Analysis** 
+At this level of analysis, the autocorrelation between the different series shall be established then provide the narrative for the results
 
-```{r ACF and PACF analysis of the series}
+\- GDP
+\- FDI_Inflow
+\- FDI_stock
+\- NFA_Spread
+\- REER
+
+**GDP**
+```{r GDP ACF and PACF analysis}
+#the data set
+# GDP
+
+N <- length(GDP_Growth)
+N
+
+GDP_level <- as.numeric(GDP_Growth[-1])
+GDP_lags <-as.numeric(GDP_Growth[-N])
+
+#estimate model
+GDP_mod <- lm(GDP_level ~ GDP_lags)
+GDP_armod <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(GDP_level), 2) + L(ts(GDP_level), 3) + L(ts(GDP_level), 4) + L(ts(GDP_level), 5)+ L(ts(GDP_level), 6) +L(ts(GDP_level), 7))
+
+#robust summary
+coeftest(GDP_armod, vcov. = sandwich)
+coeftest(GDP_mod, vcov. = sandwich)
+#AR(2)
+summary(GDP_armod)$sigma
+summary(GDP_armod)$r.squared
+#AR(1) like ols
+summary(GDP_mod)$sigma
+summary(GDP_mod)$r.squared
+
+# Calculate the ACF and PACF 
+acf(na.omit(GDP_Growth), lag.max = 7, plot= T)
+pacf(na.omit(GDP_Growth),lag.max = 7, plot= T)
+
+# Use BIC to determine the lags
+
+```
+**FDI_inflow**
+```{r FDI_inflow ACF and PACF analysis}
+#the data sets
+# FDI_inflow
+
+N <- length(FDI_Growth)
+N
+
+FDI_inflow_level <- as.numeric(FDI_Growth[-1])
+FDI_inflow_lags <-as.numeric(FDI_Growth[-N])
+
+#estimate model
+FDI_inflow_mod <- lm(FDI_inflow_level ~ FDI_inflow_lags)
+FDI_inflow_armod <- dynlm(ts(FDI_inflow_level) ~ L(ts(FDI_inflow_level)) + L(ts(FDI_inflow_level), 2) + L(ts(FDI_inflow_level), 3) + L(ts(FDI_inflow_level), 4))
+
+#robust summary
+coeftest(FDI_inflow_armod, vcov. = sandwich)
+coeftest(FDI_inflow_mod, vcov. = sandwich)
+#AR(2)
+summary(FDI_inflow_armod)$sigma
+summary(FDI_inflow_armod)$r.squared
+#AR(1) like ols
+summary(FDI_inflow_mod)$sigma
+summary(FDI_inflow_mod)$r.squared
+
+# Calculate the ACF and PACF 
+acf(na.omit(FDI_Growth), lag.max = 4, plot= T)
+pacf(na.omit(FDI_Growth),lag.max = 4, plot= T)
+
+# Use BIC to determine the lags
+
+```
+**FDI_stock**
+```{r FDI_stock ACF and PACF analysis}
 #the data sets
 # REER
 # NFA_d
 # GDP
 # FDI_inflow
 # FDI_Stock
-N <- length(GDP)
+N <- length(REER)
 N
 
 REER_level <- as.numeric(REER[-1])
@@ -190,22 +262,96 @@ REER_mod <- lm(REER_level ~ REER_lags)
 REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
 
 #robust summary
-#coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
 coeftest(REER_armod, vcov. = sandwich)
+coeftest(REER_mod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_mod, vcov. = sandwich)
 #AR(2)
 summary(REER_armod)$sigma
 summary(REER_armod)$r.squared
-
+#AR(1) like ols
 summary(REER_mod)$sigma
 summary(REER_mod)$r.squared
 
-acf(na.omit(REER), lag.max = 6, plot = T)
+# Calculate the ACF and PACF 
+acf(na.omit(REER), lag.max = 4, plot= T)
 pacf(na.omit(REER),lag.max = 4, plot= T)
 
-# then FIt AR(N) for N=4
+# Use BIC to determine the lags
+```
+**NFA_spread**
+```{r NFA_spread ACF and PACF analysis}
+#the data sets
+# REER
+# NFA_d
+# GDP
+# FDI_inflow
+# FDI_Stock
+N <- length(REER)
+N
 
-# Use BIC to deteremine the lags
+REER_level <- as.numeric(REER[-1])
+REER_lags <-as.numeric(REER[-N])
+
+#estimate model
+REER_mod <- lm(REER_level ~ REER_lags)
+REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
+
+#robust summary
+coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_armod, vcov. = sandwich)
+coeftest(REER_mod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_mod, vcov. = sandwich)
+#AR(2)
+summary(REER_armod)$sigma
+summary(REER_armod)$r.squared
+#AR(1) like ols
+summary(REER_mod)$sigma
+summary(REER_mod)$r.squared
+
 # Calculate the ACF and PACF 
+acf(na.omit(REER), lag.max = 4, plot= T)
+pacf(na.omit(REER),lag.max = 4, plot= T)
+
+# Use BIC to determine the lags
+```
+**REER**
+```{r REER ACF and PACF analysis }
+#the data sets
+# REER
+# NFA_d
+# GDP
+# FDI_inflow
+# FDI_Stock
+N <- length(REER)
+N
+
+REER_level <- as.numeric(REER[-1])
+REER_lags <-as.numeric(REER[-N])
+
+#estimate model
+REER_mod <- lm(REER_level ~ REER_lags)
+REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
+
+#robust summary
+coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_armod, vcov. = sandwich)
+coeftest(REER_mod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_mod, vcov. = sandwich)
+#AR(2)
+summary(REER_armod)$sigma
+summary(REER_armod)$r.squared
+#AR(1) like ols
+summary(REER_mod)$sigma
+summary(REER_mod)$r.squared
+
+# Calculate the ACF and PACF 
+acf(na.omit(REER), lag.max = 4, plot= T)
+pacf(na.omit(REER),lag.max = 4, plot= T)
+
+# Use BIC to determine the lags
+
+
 ```
 
 **Testing and modeling using the ADL and testing for Predictability of the Regressors** At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger's Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
