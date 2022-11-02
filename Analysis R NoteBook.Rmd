@@ -346,13 +346,55 @@ pacf(na.omit(REER_Growth),lag.max = 4, plot= T)
 **Testing and modeling using the ADL and testing for Predictability of the Regressors** At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger's Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
 
 ```{r ADL model and test for stationality and Predicatble powers}
+ GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(GDP_level),2) + L(ts(FDI_stock_level)) + L(ts(FDI_stock_level),2) + L(ts(FDI_inflow_level)) + L(ts(FDI_inflow_level),2) + L(ts(NFA_level)) + L(ts(NFA_level),2) + L(ts(REER_level)) + L(ts(REER_level),2))
+coeftest(GDP_adl, vcov. = sandwich)
+summary(GDP_adl)$sigma
+summary(REER_armod)$r.squared
+
+#F-test on coefficients of term spread (Granger's Causality Tests) that uses the F-Test
+linearHypothesis(GDP_adl,
+c("L(ts(FDI_stock_level))=0", "L(ts(FDI_stock_level), 2)=0" ),
+vcov. = sandwich)
+
+linearHypothesis(GDP_adl,
+c("L(ts(FDI_inflow_level))=0", "L(ts(FDI_inflow_level), 2)=0"),
+vcov. = sandwich)
+
+linearHypothesis(GDP_adl,
+c("L(ts(NFA_level))=0" ,"L(ts(NFA_level), 2)=0"),
+vcov. = sandwich)
+
+linearHypothesis(GDP_adl,
+c("L(ts(REER_level))=0", "L(ts(REER_level), 2)=0"),
+vcov. = sandwich)
+
 ```
 
-**Fitting and ARIMAX model and Forecast the Default where h = 20** At this level, an ARIMAX model is fitted on the series to forecast the GDP based on the exogenous independent. The ARIMAX model is an extension of Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model has three parameters namely, p, d and q, where p is the autoregressive term, q is the moving average term and d indicated the series is differenced to make it stationary.
+**Fitting and ARIMAX model and Forecast the Default where h = 20** 
+At this level, an ARIMAX model is fitted on the series to forecast the GDP based on the exogenous independent. The ARIMAX model is an extension of Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model has three parameters namely, p, d and q, where p is the autoregressive term, q is the moving average term and d indicated the series is differenced to make it stationary.
 
 Regressions with non-stationary series are spurious and analyses are not valid. For this work, we test if there is stationarity by applying the Augmented Dickey-Fuller (ADF). Visually examining the autocorrelation function (ACF) and partial autocorrelation function (PACF) combined patterns should reveal some important features at least inconclusively which should help to identify the orders of AR and MA parameters of the model
 
 ```{r ARIMAX modeling}
+GDP_arimax <- arima (GDP_Growth, order=c(1, 2, 2),
+                xreg=NFA_Growth)
+GDP_arimax
+GDP_arimax$coef
+
+GDP_arimax_inflow <- arima (GDP_Growth, order=c(1, 2, 2),
+                xreg=FDI_inflow)
+GDP_arimax_inflow
+GDP_arimax_inflow$coef
+
+GDP_arimax_stock <- arima (GDP_Growth, order=c(1, 2, 2),
+                xreg=FDI_Stock_Growth)
+GDP_arimax_stock
+GDP_arimax_stock$coef
+NFA_Growth
+
+#values <- forecast(GDP_arimax, newxreg=NFA_Growth)
+#values
+
 ```
 
 **Narrative**
