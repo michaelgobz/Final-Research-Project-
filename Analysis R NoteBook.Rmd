@@ -187,13 +187,17 @@ REER_lags <-as.numeric(REER[-N])
 
 #estimate model
 REER_mod <- lm(REER_level ~ REER_lags)
-REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2))
+REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2) + L(ts(REER_level), 3) + L(ts(REER_level), 4))
 
 #robust summary
 #coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
 coeftest(REER_armod, vcov. = sandwich)
 #AR(2)
-#summary(REER_armod)$sigma
+summary(REER_armod)$sigma
+summary(REER_armod)$r.squared
+
+summary(REER_mod)$sigma
+summary(REER_mod)$r.squared
 
 acf(na.omit(REER), lag.max = 6, plot = T)
 pacf(na.omit(REER),lag.max = 4, plot= T)
