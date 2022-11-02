@@ -103,7 +103,9 @@ plot(as.zoo(GDP_Growth),
       main = "Ugandas GDP Growth"
 )
 ```
+
 **FDI Inflow**
+
 ```{r FDI Inflow }
 # FDI inflow 
 
@@ -133,8 +135,10 @@ plot(as.zoo(FDI_Stock_Growth),
       main = "Ugandas FDI Stock Growth"
 )
 ```
-**Excess of NFA (net Foreign Assets) **
-``` {r Excess of NFA }
+
+**Excess of NFA (net Foreign Assets)**
+
+```{r Excess of NFA }
 # Excess of NFA 
 
 NFA_d <- xts(dataset$`ExcessNFA$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
@@ -149,8 +153,9 @@ plot(as.zoo(NFA_Growth),
 )
 ```
 
-**REER (Real Effective Exchange Rate) **
-``` {r REER }
+**REER (Real Effective Exchange Rate)**
+
+```{r REER }
 # REER 
 
 REER<- xts(dataset$REER,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
@@ -168,6 +173,35 @@ plot(as.zoo(REER_Growth),
 **First level of Analysis** At this level of analysis, the autocorrelation between the different series shall be established then provide the narrative for the results
 
 ```{r ACF and PACF analysis of the series}
+#the data sets
+# REER
+# NFA_d
+# GDP
+# FDI_inflow
+# FDI_Stock
+N <- length(GDP)
+N
+
+REER_level <- as.numeric(REER[-1])
+REER_lags <-as.numeric(REER[-N])
+
+#estimate model
+REER_mod <- lm(REER_level ~ REER_lags)
+REER_armod <- dynlm(ts(REER_level) ~ L(ts(REER_level)) + L(ts(REER_level), 2))
+
+#robust summary
+#coeftest(REER_armod, vcov. = vcovHC, type = "HC1")
+coeftest(REER_armod, vcov. = sandwich)
+#AR(2)
+#summary(REER_armod)$sigma
+
+acf(na.omit(REER), lag.max = 6, plot = T)
+pacf(na.omit(REER),lag.max = 4, plot= T)
+
+# then FIt AR(N) for N=4
+
+# Use BIC to deteremine the lags
+# Calculate the ACF and PACF 
 ```
 
 **Testing and modeling using the ADL and testing for Predictability of the Regressors** At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger's Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
