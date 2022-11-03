@@ -1,6 +1,9 @@
 ---
 title: "Effects of the FDI on the Economic Growth of Uganda Time series Evidence"
 output: html_notebook
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 The analysis bases on 4 variables
@@ -15,13 +18,18 @@ The analysis bases on 4 variables
 
 -   \- GDP of Uganda
 
-The time period for analysis is 1960 to 2021, with this raw data having missing values we need to correct for the missing values statistically.
+The time period for analysis is 1960 to 2020, with this raw data having
+missing values we need to correct for the missing values statistically.
 
-Then raw data is in USD and Net foreign assets is in LCUs (local currency Units) which is converted to USD to make it uniform
+Then raw data is in USD and Net foreign assets is in LCUs (local
+currency Units) which is converted to USD to make it uniform
 
 **Setting The Analysis Environment**
 
-Setup the packages required for analysis and load them requires the Rtools to build some of the packages download the binaries from here [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html)
+Setup the packages required for analysis and load them requires the
+Rtools to build some of the packages download the binaries from here
+this is only for local setup
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html)
 
 Install them
 
@@ -56,7 +64,7 @@ Load the data in from excel
 
 ```{r load the data in data.xlsx}
 dataset <- read_xlsx("./data.xlsx",sheet = 4, col_types= "numeric")
-dataset
+View(dataset)
 ```
 
 Helper functions for Transformations
@@ -88,17 +96,17 @@ quants <- function(series) {
 
 ```
 
-**Plots of the variables with x-lab being 1960 to 2021 periods**
+**Plots of the variables with x-lab being 1960 to 2020 periods**
 
 ```{r Plots the variables}
 #plot the lagged log values
 GDP <- xts(dataset$`GDP$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-GDP_Growth <- xts(100 * log(GDP/lag(GDP)))
+GDP_Growth <- xts(log(GDP/lag(GDP)))
 GDP_Growth
 plot(as.zoo(GDP_Growth),
       col = "steelblue",
       lwd = 2,
-      ylab = "Logarithm",
+      ylab =  "Growth",
       xlab = "Period in years",
       main = "Ugandas GDP Growth"
 )
@@ -110,12 +118,13 @@ plot(as.zoo(GDP_Growth),
 # FDI inflow 
 
 FDI_inflow <- xts(dataset$`FDIinflows$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-FDI_Growth <- xts(100 * log(FDI_inflow/lag(FDI_inflow)))
+FDI_Growth <- xts(log(FDI_inflow/lag(FDI_inflow)))
+View(FDI_Growth)
 FDI_Growth
 plot(as.zoo(FDI_Growth),
       col = "steelblue",
       lwd = 2,
-      ylab = "Logarithm",
+      ylab = "Growth",
       xlab = "Period in years",
       main = "Ugandas FDI Inflow Growth"
 )
@@ -125,12 +134,13 @@ plot(as.zoo(FDI_Growth),
 # FDI Stock 
 
 FDI_Stock <- xts(dataset$`FDIStock$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-FDI_Stock_Growth <- xts(100 * log(FDI_Stock/lag(FDI_Stock)))
+FDI_Stock_Growth <- xts(log(FDI_Stock/lag(FDI_Stock)))
+View(FDI_Stock_Growth)
 FDI_Stock_Growth
 plot(as.zoo(FDI_Stock_Growth),
       col = "steelblue",
       lwd = 2,
-      ylab = "Logarithm",
+      ylab = "Growth",
       xlab = "Period in years",
       main = "Ugandas FDI Stock Growth"
 )
@@ -142,14 +152,15 @@ plot(as.zoo(FDI_Stock_Growth),
 # Excess of NFA 
 
 NFA_d <- xts(dataset$`ExcessNFA$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-NFA_Growth <- xts(100 * log(NFA_d/lag(NFA_d)))
+NFA_Growth <- xts(log(NFA_d/lag(NFA_d)))
+View(NFA_Growth)
 NFA_Growth
 plot(as.zoo(NFA_Growth),
       col = "steelblue",
       lwd = 2,
-      ylab = "Logarithm",
+      ylab = "Growth",
       xlab = "Period in years",
-      main = "Ugandas Excess of NFA of GDP Growth"
+      main = "Ugandas Excess of NFA over GDP Growth"
 )
 ```
 
@@ -159,27 +170,26 @@ plot(as.zoo(NFA_Growth),
 # REER 
 
 REER<- xts(dataset$REER,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-REER_Growth <- xts(100 * log(REER/lag(REER)))
+REER_Growth <- xts(log(REER/lag(REER)))
+View(REER_Growth)
 REER_Growth
 plot(as.zoo(REER_Growth),
       col = "steelblue",
       lwd = 2,
-      ylab = "Logarithm",
+      ylab = "Growth",
       xlab = "Period in years",
       main = "Ugandas REER Growth"
 )
 ```
 
-**First level of Analysis** 
-At this level of analysis, the autocorrelation between the different series shall be established then provide the narrative for the results
+**First level of Analysis** At this level of analysis, the
+autocorrelation between the different series shall be established then
+provide the narrative for the results
 
-\- GDP
-\- FDI_Inflow
-\- FDI_stock
-\- NFA_Spread
-\- REER
+\- GDP - FDI_Inflow - FDI_stock - NFA_Spread - REER
 
 **GDP**
+
 ```{r GDP ACF and PACF analysis}
 #the data set
 # GDP
@@ -211,7 +221,9 @@ pacf(na.omit(GDP_Growth),lag.max = 4, plot= F)
 # Use BIC to determine the lags
 
 ```
+
 **FDI_inflow**
+
 ```{r FDI_inflow ACF and PACF analysis}
 #the data sets
 # FDI_inflow
@@ -243,7 +255,9 @@ pacf(na.omit(FDI_Growth),lag.max = 4, plot= T)
 # Use BIC to determine the lags
 
 ```
+
 **FDI_stock**
+
 ```{r FDI_stock ACF and PACF analysis}
 #the data sets
 # REER
@@ -277,7 +291,9 @@ pacf(na.omit(FDI_Stock_Growth),lag.max = 4, plot= T)
 
 # Use BIC to determine the lags
 ```
+
 **NFA_spread**
+
 ```{r NFA_spread ACF and PACF analysis}
 #the data sets
 # NFA_d
@@ -309,7 +325,9 @@ pacf(na.omit(NFA_Growth),lag.max = 4, plot= T)
 
 # Use BIC to determine the lags
 ```
+
 **REER**
+
 ```{r REER ACF and PACF analysis }
 #the data sets
 # REER
@@ -343,7 +361,15 @@ pacf(na.omit(REER_Growth),lag.max = 4, plot= T)
 
 ```
 
-**Testing and modeling using the ADL and testing for Predictability of the Regressors** At this level of analysis I shall fit a general regression model with multiple regressors which is an extension of the classical ADL model but with multiple Predictors. The mode is as follows, It uses p lags of the dependent variable and **ql** lags of **l** additional predictors where **l = 1, . . ., k** then applying the **Granger's Causality Tests** to a certain the predictive power the lags included in the model to predict the dependent variable Then Determine the Dynamic Causal Effects of the Regressors.
+**Testing and modeling using the ADL and testing for Predictability of
+the Regressors** At this level of analysis I shall fit a general
+regression model with multiple regressors which is an extension of the
+classical ADL model but with multiple Predictors. The mode is as
+follows, It uses p lags of the dependent variable and **ql** lags of
+**l** additional predictors where **l = 1, . . ., k** then applying the
+**Granger's Causality Tests** to a certain the predictive power the lags
+included in the model to predict the dependent variable Then Determine
+the Dynamic Causal Effects of the Regressors.
 
 ```{r ADL model and test for stationality and Predicatble powers}
  GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(GDP_level),2) + L(ts(FDI_stock_level)) + L(ts(FDI_stock_level),2) + L(ts(FDI_inflow_level)) + L(ts(FDI_inflow_level),2) + L(ts(NFA_level)) + L(ts(NFA_level),2) + L(ts(REER_level)) + L(ts(REER_level),2))
@@ -370,10 +396,21 @@ vcov. = sandwich)
 
 ```
 
-**Fitting and ARIMAX model and Forecast the Default where h = 20** 
-At this level, an ARIMAX model is fitted on the series to forecast the GDP based on the exogenous independent. The ARIMAX model is an extension of Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model has three parameters namely, p, d and q, where p is the autoregressive term, q is the moving average term and d indicated the series is differenced to make it stationary.
+**Fitting and ARIMAX model and Forecast the Default where h = 20** At
+this level, an ARIMAX model is fitted on the series to forecast the GDP
+based on the exogenous independent. The ARIMAX model is an extension of
+Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model
+has three parameters namely, p, d and q, where p is the autoregressive
+term, q is the moving average term and d indicated the series is
+differenced to make it stationary.
 
-Regressions with non-stationary series are spurious and analyses are not valid. For this work, we test if there is stationarity by applying the Augmented Dickey-Fuller (ADF). Visually examining the autocorrelation function (ACF) and partial autocorrelation function (PACF) combined patterns should reveal some important features at least inconclusively which should help to identify the orders of AR and MA parameters of the model
+Regressions with non-stationary series are spurious and analyses are not
+valid. For this work, we test if there is stationarity by applying the
+Augmented Dickey-Fuller (ADF). Visually examining the autocorrelation
+function (ACF) and partial autocorrelation function (PACF) combined
+patterns should reveal some important features at least inconclusively
+which should help to identify the orders of AR and MA parameters of the
+model
 
 ```{r ARIMAX modeling}
 GDP_arimax <- arima (GDP_Growth, order=c(1, 2, 2),
