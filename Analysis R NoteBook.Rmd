@@ -77,7 +77,18 @@ BIC <- function(model) {
   npar <- length(model$coef)
   return(
     round(c("p" = npar - 1,
-      "BIC" = log(ssr/t) + npar * log(t)/t,
+      "BIC" = log(ssr/t) + (npar + 1) * log(t)/t,
+      "R2" = summary(model)$r.squared), 4)
+        )
+}
+
+AIC <- function(model) {
+  ssr <- sum(model$residualsˆ2)
+  t <- length(model$residuals)
+  npar <- length(model$coef)
+  return(
+    round(c("p" = npar - 1,
+      "AIC" = log(ssr/t) + (npar + 1) * 2/t,
       "R2" = summary(model)$r.squared), 4)
         )
 }
@@ -101,7 +112,7 @@ quants <- function(series) {
 ```{r Plots the variables}
 #plot the lagged log values
 GDP <- xts(dataset$`GDP$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-GDP_Growth <- xts(log(GDP/lag(GDP)))
+GDP_Growth <- xts(100 *log(GDP/lag(GDP)))
 GDP_Growth
 plot(as.zoo(GDP_Growth),
       col = "steelblue",
@@ -202,7 +213,7 @@ GDP_lags <-as.numeric(GDP_Growth[-N])
 
 #estimate model
 GDP_mod <- lm(GDP_level ~ GDP_lags)
-GDP_armod <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(GDP_level), 2) + L(ts(GDP_level), 3) + L(ts(GDP_level), 4) + L(ts(GDP_level), 5)+ L(ts(GDP_level), 6) +L(ts(GDP_level), 7))
+GDP_armod <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(GDP_level), 2) + L(ts(GDP_level), 3) + L(ts(GDP_level), 4) )
 
 #robust summary
 coeftest(GDP_armod, vcov. = sandwich)
@@ -215,10 +226,21 @@ summary(GDP_mod)$sigma
 summary(GDP_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(GDP_Growth), lag.max = 4, plot= F)
-pacf(na.omit(GDP_Growth),lag.max = 4, plot= F)
+acf(na.omit(GDP_Growth), lag.max = 20, plot= T)
+pacf(na.omit(GDP_Growth),lag.max = 20, plot= T)
 
 # Use BIC to determine the lags
+BIC(dynlm(ts(GDP_level) ~ 1))
+
+ssr <- sum(GDP_armod$residualsˆ2)
+t <- length(GDP_armod$residuals)
+npar <- length(GDP_armod$coef)
+ssr
+t
+npar
+AIC(GDP_armod)
+AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(GDP_level) ~ L(ts(GDP_level),1:x))))
+AICs
 
 ```
 
@@ -249,10 +271,21 @@ summary(FDI_inflow_mod)$sigma
 summary(FDI_inflow_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(FDI_Growth), lag.max = 4, plot= T)
-pacf(na.omit(FDI_Growth),lag.max = 4, plot= T)
+acf(na.omit(FDI_Growth), lag.max = 20, plot= T)
+pacf(na.omit(FDI_Growth),lag.max = 20, plot= T,main="FDI Inflow")
 
 # Use BIC to determine the lags
+BIC(dynlm(ts(FDI_inflow_level) ~ 1))
+
+ssr <- sum(FDI_inflow_armod$residualsˆ2)
+t <- length(FDI_inflow_armod$residuals)
+npar <- length(FDI_inflow_armod$coef)
+ssr
+t
+npar
+AIC(FDI_inflow_armod)
+AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(FDI_inflow_level) ~ L(ts(FDI_inflow_level),1:x))))
+AICs
 
 ```
 
@@ -286,10 +319,21 @@ summary(FDI_stock_mod)$sigma
 summary(FDI_stock_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(FDI_Stock_Growth), lag.max = 4, plot= T)
-pacf(na.omit(FDI_Stock_Growth),lag.max = 4, plot= T)
+acf(na.omit(FDI_Stock_Growth), lag.max = 20, plot= T)
+pacf(na.omit(FDI_Stock_Growth),lag.max = 20, plot= T)
 
 # Use BIC to determine the lags
+BIC(dynlm(ts(FDI_inflow_level) ~ 1))
+
+ssr <- sum(FDI_stock_armod$residualsˆ2)
+t <- length(FDI_stock_armod$residuals)
+npar <- length(FDI_stock_armod$coef)
+ssr
+t
+npar
+AIC(FDI_stock_armod)
+AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(FDI_stock_level) ~ L(ts(FDI_stock_level),1:x))))
+AICs
 ```
 
 **NFA_spread**
@@ -320,10 +364,21 @@ summary(NFA_mod)$sigma
 summary(NFA_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(NFA_Growth), lag.max = 4, plot= T)
-pacf(na.omit(NFA_Growth),lag.max = 4, plot= T)
+acf(na.omit(NFA_Growth), lag.max = 20, plot= T)
+pacf(na.omit(NFA_Growth),lag.max = 20, plot= T)
 
 # Use BIC to determine the lags
+BIC(dynlm(ts(NFA_level) ~ 1))
+
+ssr <- sum(NFA_armod$residualsˆ2)
+t <- length(NFA_armod$residuals)
+npar <- length(NFA_armod$coef)
+ssr
+t
+npar
+AIC(NFA_armod)
+AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(NFA_level) ~ L(ts(NFA_level),1:x))))
+AICs
 ```
 
 **REER**
@@ -353,8 +408,8 @@ summary(REER_mod)$sigma
 summary(REER_mod)$r.squared
 
 # Calculate the ACF and PACF 
-acf(na.omit(REER_Growth), lag.max = 4, plot= T)
-pacf(na.omit(REER_Growth),lag.max = 4, plot= T)
+acf(na.omit(REER_Growth), lag.max = 20, plot= T)
+pacf(na.omit(REER_Growth),lag.max = 20, plot= T)
 
 # Use BIC to determine the lags
 
@@ -372,14 +427,19 @@ included in the model to predict the dependent variable Then Determine
 the Dynamic Causal Effects of the Regressors.
 
 ```{r ADL model and test for stationality and Predicatble powers}
- GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(GDP_level),2) + L(ts(FDI_stock_level)) + L(ts(FDI_stock_level),2) + L(ts(FDI_inflow_level)) + L(ts(FDI_inflow_level),2) + L(ts(NFA_level)) + L(ts(NFA_level),2) + L(ts(REER_level)) + L(ts(REER_level),2))
+ GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(FDI_stock_level)) + L(ts(FDI_stock_level),2) + L(ts(FDI_inflow_level)) + L(ts(FDI_inflow_level),2) + L(ts(NFA_level)) + L(ts(NFA_level),2) + L(ts(REER_level)) + L(ts(REER_level),2))
 coeftest(GDP_adl, vcov. = sandwich)
+print("ADL with multiple Regressors model's sigma R^2")
 summary(GDP_adl)$sigma
-summary(REER_armod)$r.squared
+summary(GDP_adl)$r.squared
+# contrast with the AR(4) model of GDP_Growth
+print("AR(4) model's sigma R^2 ")
+summary(GDP_armod)$sigma
+summary(GDP_armod)$r.squared
 
 #F-test on coefficients of term spread (Granger's Causality Tests) that uses the F-Test
 linearHypothesis(GDP_adl,
-c("L(ts(FDI_stock_level))=0", "L(ts(FDI_stock_level), 2)=0" ),
+c("L(ts(FDI_stock_level))=0", "L(ts(FDI_stock_level), 2)=0" ,"L(ts(FDI_inflow_level))=0", "L(ts(FDI_inflow_level), 2)=0", "L(ts(NFA_level))=0" ,"L(ts(NFA_level), 2)=0", "L(ts(REER_level))=0", "L(ts(REER_level), 2)=0"),
 vcov. = sandwich)
 
 linearHypothesis(GDP_adl,
