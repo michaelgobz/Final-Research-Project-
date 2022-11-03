@@ -1,5 +1,5 @@
 ---
-title: "Effects of the FDI on the Economic Growth of Uganda Time series Evidence"
+title: "Effects of the FDI on the Economic Growth of Uganda Time series Evidence from 1960 to 2020"
 output: html_notebook
 editor_options: 
   markdown: 
@@ -454,65 +454,6 @@ linearHypothesis(GDP_adl,
 c("L(ts(REER_level))=0", "L(ts(REER_level), 2)=0"),
 vcov. = sandwich)
 
-# ADF Test
-summary(ur.df(GDP_Growth,
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
-
-
-```
-
-**ADF test for Unit Root**
-
-```{r ADF Test for a Unit Root}
-# ADF Test
-library("urca")
-# difference model
-LogGDP <- ts(log(dataset$`GDP$millions`))
-LogFDI_Inflow <- ts(log(dataset$`FDIinflows$millions`))
-LogFDI_stock <- ts(log(dataset$`FDIStock$millions`))
-Log_NFA <- ts(log(dataset$`ExcessNFA$millions`))
-Log_REER <-ts(log(dataset$REER))
-
-coeftest(
-dynlm(diff(LogFDI_Inflow) ~ trend(LogFDI_Inflow, scale = F) + L(LogFDI_Inflow)
-+ diff(L(LogFDI_Inflow)) + diff(L(LogFDI_Inflow), 2)))
-
-coeftest(
-dynlm(diff(LogGDP) ~ trend(LogGDP, scale = F) + L(LogGDP)
-+ diff(L(LogGDP)) + diff(L(LogGDP), 2)))
-
-coeftest(
-dynlm(diff(LogFDI_stock) ~ trend(LogFDI_stock, scale = F) + L(LogFDI_stock)
-+ diff(L(LogFDI_stock)) + diff(L(LogFDI_stock), 2)))
-
-summary(ur.df((LogGDP),
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
-
-summary(ur.df((LogFDI_Inflow),
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
-
-summary(ur.df((LogFDI_stock),
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
-summary(ur.df((Log_NFA),
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
-summary(ur.df((Log_REER),
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
-  summary(ur.df((Log_NFA),
-  type = "trend",
-  lags = 2,
-  selectlags = "Fixed"))
 ```
 
 **Fitting and ARIMAX model and Forecast the Default where h = 20** At
@@ -546,6 +487,7 @@ GDP_arimax_stock <- arima (GDP_Growth, order=c(1, 2, 2),
                 xreg=FDI_Stock_Growth)
 GDP_arimax_stock
 GDP_arimax_stock$coef
+NFA_Growth
 
 #values <- forecast(GDP_arimax, newxreg=NFA_Growth)
 #values
