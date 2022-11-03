@@ -63,7 +63,7 @@ library(stats)
 Load the data in from excel
 
 ```{r load the data in data.xlsx}
-dataset <- read_xlsx("./data.xlsx",sheet = 4, col_types= "numeric")
+dataset <- read_xlsx("./data.xlsx",sheet = 4 )
 View(dataset)
 ```
 
@@ -336,7 +336,7 @@ AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(FDI_stock_level) ~ L(ts(FDI_
 AICs
 ```
 
-**NFA_spread**
+**NFA**
 
 ```{r NFA_spread ACF and PACF analysis}
 #the data sets
