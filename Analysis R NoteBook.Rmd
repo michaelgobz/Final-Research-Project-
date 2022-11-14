@@ -112,7 +112,7 @@ quants <- function(series) {
 ```{r Plots the variables}
 #plot the lagged log values
 GDP <- xts(dataset$`GDP$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-GDP_Growth <- xts(100 *log(GDP/lag(GDP)))
+GDP_Growth <- xts(100 * log(GDP/lag(GDP)))
 GDP_Growth
 plot(as.zoo(GDP_Growth),
       col = "steelblue",
@@ -129,7 +129,7 @@ plot(as.zoo(GDP_Growth),
 # FDI inflow 
 
 FDI_inflow <- xts(dataset$`FDIinflows$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-FDI_Growth <- xts(log(FDI_inflow/lag(FDI_inflow)))
+FDI_Growth <- xts(100 * log(FDI_inflow/lag(FDI_inflow)))
 View(FDI_Growth)
 FDI_Growth
 plot(as.zoo(FDI_Growth),
@@ -145,7 +145,7 @@ plot(as.zoo(FDI_Growth),
 # FDI Stock 
 
 FDI_Stock <- xts(dataset$`FDIStock$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-FDI_Stock_Growth <- xts(log(FDI_Stock/lag(FDI_Stock)))
+FDI_Stock_Growth <- xts(100 * log(FDI_Stock/lag(FDI_Stock)))
 View(FDI_Stock_Growth)
 FDI_Stock_Growth
 plot(as.zoo(FDI_Stock_Growth),
@@ -163,7 +163,7 @@ plot(as.zoo(FDI_Stock_Growth),
 # Excess of NFA 
 
 NFA_d <- xts(dataset$`ExcessNFA$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-NFA_Growth <- xts(log(NFA_d/lag(NFA_d)))
+NFA_Growth <- xts(100 * log(NFA_d/lag(NFA_d)))
 View(NFA_Growth)
 NFA_Growth
 plot(as.zoo(NFA_Growth),
@@ -181,7 +181,7 @@ plot(as.zoo(NFA_Growth),
 # REER 
 
 REER<- xts(dataset$REER,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
-REER_Growth <- xts(log(REER/lag(REER)))
+REER_Growth <- xts(100 * log(REER/lag(REER)))
 View(REER_Growth)
 REER_Growth
 plot(as.zoo(REER_Growth),
@@ -487,7 +487,12 @@ GDP_arimax_stock <- arima (GDP_Growth, order=c(1, 2, 2),
                 xreg=FDI_Stock_Growth)
 GDP_arimax_stock
 GDP_arimax_stock$coef
-NFA_Growth
+
+REER_arimax <- arima (GDP_Growth, order=c(1, 2, 2),
+                xreg=REER_Growth)
+
+REER_arimax
+REER_arimax$coef
 
 #values <- forecast(GDP_arimax, newxreg=NFA_Growth)
 #values
