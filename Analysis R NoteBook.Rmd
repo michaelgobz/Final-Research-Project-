@@ -63,7 +63,7 @@ library(stats)
 Load the data in from excel
 
 ```{r load the data in data.xlsx}
-dataset <- read_xlsx("./data.xlsx",sheet = 4 )
+dataset <- read_xlsx("./data.xlsx",sheet = 6 )
 View(dataset)
 ```
 
@@ -411,7 +411,11 @@ summary(REER_mod)$r.squared
 acf(na.omit(REER_Growth), lag.max = 20, plot= T)
 pacf(na.omit(REER_Growth),lag.max = 20, plot= T)
 
-# Use BIC to determine the lags
+# adf test for unit root 
+summary(ur.df(REER,
+  type = "trend",
+  lags = 2,
+  selectlags = "Fixed"))
 
 
 ```
@@ -427,10 +431,16 @@ included in the model to predict the dependent variable Then Determine
 the Dynamic Causal Effects of the Regressors.
 
 ```{r ADL model and test for stationality and Predicatble powers}
- GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(FDI_stock_level)) + L(ts(FDI_inflow_level)) + L(ts(NFA_level)) + L(ts(REER_level)))
+ GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(FDI_stock_level)) +L(ts(FDI_stock_level),2) + L(ts(FDI_inflow_level)) +L(ts(FDI_inflow_level),2) + L(ts(NFA_level)) +L(ts(NFA_level),2)+ L(ts(REER_level)) + L(ts(REER_level),2))
 coeftest(GDP_adl, vcov. = sandwich)
+
+GDP_adl_1 <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(FDI_stock_level)) + L(ts(FDI_inflow_level)) + L(ts(NFA_level)) + L(ts(REER_level)))
+coeftest(GDP_adl, vcov. = sandwich)
+
 print("ADL with multiple Regressors model's sigma R^2")
 summary(GDP_adl)$sigma
+print("sigma for the lag 1 ADL")
+summary(GDP_adl_1)$sigma
 summary(GDP_adl)$r.squared
 # contrast with the AR(4) model of GDP_Growth
 print("AR(4) model's sigma R^2 ")
@@ -439,22 +449,22 @@ summary(GDP_armod)$r.squared
 
 #F-test on coefficients of term spread (Granger's Causality Tests) that uses the F-Test
 linearHypothesis(GDP_adl,
-c("L(ts(FDI_stock_level))=0" ,"L(ts(FDI_inflow_level))=0", "L(ts(NFA_level))=0", "L(ts(REER_level))=0"),
+c("L(ts(FDI_stock_level))=0","L(ts(FDI_stock_level), 2)=0", "L(ts(FDI_inflow_level))=0","L(ts(FDI_inflow_level), 2)=0", "L(ts(NFA_level))=0","L(ts(NFA_level), 2)=0", "L(ts(REER_level))=0","L(ts(REER_level), 2)=0"),
 vcov. = sandwich)
 
 linearHypothesis(GDP_adl,
-c("L(ts(FDI_inflow_level))=0"),
+c("L(ts(FDI_inflow_level))=0" ,"L(ts(FDI_inflow_level), 2)=0"),
 vcov. = sandwich)
 linearHypothesis(GDP_adl,
-c("L(ts(FDI_stock_level))=0"),
-vcov. = sandwich)
-
-linearHypothesis(GDP_adl,
-c("L(ts(NFA_level))=0"),
+c("L(ts(FDI_stock_level))=0","L(ts(FDI_stock_level), 2)=0"),
 vcov. = sandwich)
 
 linearHypothesis(GDP_adl,
-c("L(ts(REER_level))=0"),
+c("L(ts(NFA_level))=0","L(ts(NFA_level), 2)=0"),
+vcov. = sandwich)
+
+linearHypothesis(GDP_adl,
+c("L(ts(REER_level))=0","L(ts(REER_level), 2)=0"),
 vcov. = sandwich)
 
 ```
