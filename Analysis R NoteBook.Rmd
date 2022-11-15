@@ -427,7 +427,7 @@ included in the model to predict the dependent variable Then Determine
 the Dynamic Causal Effects of the Regressors.
 
 ```{r ADL model and test for stationality and Predicatble powers}
- GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(FDI_stock_level)) + L(ts(FDI_stock_level),2) + L(ts(FDI_inflow_level)) + L(ts(FDI_inflow_level),2) + L(ts(NFA_level)) + L(ts(NFA_level),2) + L(ts(REER_level)) + L(ts(REER_level),2))
+ GDP_adl <- dynlm(ts(GDP_level) ~ L(ts(GDP_level)) + L(ts(FDI_stock_level)) + L(ts(FDI_inflow_level)) + L(ts(NFA_level)) + L(ts(REER_level)))
 coeftest(GDP_adl, vcov. = sandwich)
 print("ADL with multiple Regressors model's sigma R^2")
 summary(GDP_adl)$sigma
@@ -439,19 +439,22 @@ summary(GDP_armod)$r.squared
 
 #F-test on coefficients of term spread (Granger's Causality Tests) that uses the F-Test
 linearHypothesis(GDP_adl,
-c("L(ts(FDI_stock_level))=0", "L(ts(FDI_stock_level), 2)=0" ,"L(ts(FDI_inflow_level))=0", "L(ts(FDI_inflow_level), 2)=0", "L(ts(NFA_level))=0" ,"L(ts(NFA_level), 2)=0", "L(ts(REER_level))=0", "L(ts(REER_level), 2)=0"),
+c("L(ts(FDI_stock_level))=0" ,"L(ts(FDI_inflow_level))=0", "L(ts(NFA_level))=0", "L(ts(REER_level))=0"),
 vcov. = sandwich)
 
 linearHypothesis(GDP_adl,
-c("L(ts(FDI_inflow_level))=0", "L(ts(FDI_inflow_level), 2)=0"),
+c("L(ts(FDI_inflow_level))=0"),
+vcov. = sandwich)
+linearHypothesis(GDP_adl,
+c("L(ts(FDI_stock_level))=0"),
 vcov. = sandwich)
 
 linearHypothesis(GDP_adl,
-c("L(ts(NFA_level))=0" ,"L(ts(NFA_level), 2)=0"),
+c("L(ts(NFA_level))=0"),
 vcov. = sandwich)
 
 linearHypothesis(GDP_adl,
-c("L(ts(REER_level))=0", "L(ts(REER_level), 2)=0"),
+c("L(ts(REER_level))=0"),
 vcov. = sandwich)
 
 ```
