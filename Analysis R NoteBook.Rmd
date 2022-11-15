@@ -46,7 +46,7 @@ The workbook has 6 sheets where sheet 1 is the raw data obtained from the World 
 the next 4 sheets include a series of data cleaning and filling in missing values by interpolation, 
 and using the HP filter and try to approximate the values of the missing values. this was necessary for further analysis
 
-Sheet 6 of the workbook contains the final clenaed data ready for further analysis. 
+Sheet 6 of the workbook contains the final cleaned data ready for further analysis. 
 
 **Setting The Analysis Environment**
 
@@ -83,14 +83,17 @@ library(stats)
 
 ```
 
-**Load the data in from Excel*
+**Load the data in from Excel**
 
 ```{r load the data in data.xlsx}
 dataset <- read_xlsx("./data.xlsx",sheet = 6 )
 View(dataset)
 ```
 
-Helper functions for Transformations
+**Helper functions for Transformations**
+-  \- BIC function
+-  \- AIC function
+-  \- quants growth series generator
 
 ```{r helper functions}
 # compute BIC for AR model objects of class 'dynlm'
@@ -132,6 +135,7 @@ quants <- function(series) {
 
 **Plots of the variables with x-lab being 1960 to 2020 periods**
 
+- \- GDP growth plot
 ```{r Plots the variables}
 #plot the lagged log values
 GDP <- xts(dataset$`GDP$millions`,order.by = as.Date(dataset$FY, origin = "1899-12-30" ,tryFormats=c("%Y-%m-%d")))
@@ -144,9 +148,10 @@ plot(as.zoo(GDP_Growth),
       xlab = "Period in years",
       main = "Ugandas GDP Growth"
 )
+
 ```
 
-**FDI Inflow**
+- \- FDI Inflow growth plot
 
 ```{r FDI Inflow }
 # FDI inflow 
@@ -164,6 +169,8 @@ plot(as.zoo(FDI_Growth),
 )
 ```
 
+-  \- FDI Stock growth  plot
+
 ```{r FDI Stock }
 # FDI Stock 
 
@@ -180,7 +187,7 @@ plot(as.zoo(FDI_Stock_Growth),
 )
 ```
 
-**Excess of NFA (net Foreign Assets)**
+-  \-  Excess of NFA Growth Plot
 
 ```{r Excess of NFA }
 # Excess of NFA 
@@ -198,7 +205,7 @@ plot(as.zoo(NFA_Growth),
 )
 ```
 
-**REER (Real Effective Exchange Rate)**
+-  \- Real Effective Exchange Rate Growth Plot
 
 ```{r REER }
 # REER 
@@ -216,13 +223,16 @@ plot(as.zoo(REER_Growth),
 )
 ```
 
-**First level of Analysis** At this level of analysis, the
+**First level of Analysis** 
+At this level of analysis, the
 autocorrelation between the different series shall be established then
 provide the narrative for the results
 
-\- GDP - FDI_Inflow - FDI_stock - NFA_Spread - REER
+-  \- GDP - FDI_Inflow - FDI_stock - NFA_Spread - REER
 
-**GDP**
+
+
+-  \- GDP Growth 
 
 ```{r GDP ACF and PACF analysis}
 #the data set
@@ -263,11 +273,16 @@ t
 npar
 AIC(GDP_armod)
 AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(GDP_level) ~ L(ts(GDP_level),1:x))))
-AICs
+
+# ADF test for unit root 
+summary(ur.df(GDP,
+  type = "trend",
+  lags = 2,
+  selectlags = "Fixed"))
 
 ```
 
-**FDI_inflow**
+-  \-FDI_inflow
 
 ```{r FDI_inflow ACF and PACF analysis}
 #the data sets
@@ -308,11 +323,17 @@ t
 npar
 AIC(FDI_inflow_armod)
 AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(FDI_inflow_level) ~ L(ts(FDI_inflow_level),1:x))))
-AICs
+
+# ADF test for unit root 
+summary(ur.df(FDI_inflow,
+  type = "trend",
+  lags = 2,
+  selectlags = "Fixed"))
+
 
 ```
 
-**FDI_stock**
+-   \- FDI_stock
 
 ```{r FDI_stock ACF and PACF analysis}
 #the data sets
@@ -356,7 +377,12 @@ t
 npar
 AIC(FDI_stock_armod)
 AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(FDI_stock_level) ~ L(ts(FDI_stock_level),1:x))))
-AICs
+
+# ADF test for unit root 
+summary(ur.df(FDI_Stock,
+  type = "trend",
+  lags = 2,
+  selectlags = "Fixed"))
 ```
 
 **NFA**
@@ -401,7 +427,13 @@ t
 npar
 AIC(NFA_armod)
 AICs <- sapply(1:6,FUN=function(x)"AR"=AIC(dynlm(ts(NFA_level) ~ L(ts(NFA_level),1:x))))
-AICs
+
+# ADF test for unit root 
+summary(ur.df(NFA_d,
+  type = "trend",
+  lags = 2,
+  selectlags = "Fixed"))
+
 ```
 
 **REER**
@@ -434,17 +466,15 @@ summary(REER_mod)$r.squared
 acf(na.omit(REER_Growth), lag.max = 20, plot= T)
 pacf(na.omit(REER_Growth),lag.max = 20, plot= T)
 
-# adf test for unit root 
+# ADF test for unit root 
 summary(ur.df(REER,
   type = "trend",
   lags = 2,
   selectlags = "Fixed"))
-
-
 ```
 
-**Testing and modeling using the ADL and testing for Predictability of
-the Regressors** At this level of analysis I shall fit a general
+**Testing and modeling using the ADL and testing for Predictability of the Regressors** 
+At this level of analysis I shall fit a general
 regression model with multiple regressors which is an extension of the
 classical ADL model but with multiple Predictors. The mode is as
 follows, It uses p lags of the dependent variable and **ql** lags of
@@ -492,8 +522,8 @@ vcov. = sandwich)
 
 ```
 
-**Fitting and ARIMAX model and Forecast the Default where h = 20** At
-this level, an ARIMAX model is fitted on the series to forecast the GDP
+**Fitting and ARIMAX model and Forecast the Default where h = 20** 
+At this level, an ARIMAX model is fitted on the series to forecast the GDP
 based on the exogenous independent. The ARIMAX model is an extension of
 Auto regressive Integrated Moving Average (ARIMA) model. The ARIMA model
 has three parameters namely, p, d and q, where p is the autoregressive
