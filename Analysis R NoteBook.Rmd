@@ -6,9 +6,9 @@ editor_options:
     wrap: 72
 ---
 
-The analysis bases on 4 variables
+The Analysis bases on 4 variables
 
--   \- FDI stock
+-   \- FDI stock (look at this a stock of FDI belonging to Uganda proxied with net FDI)
 
 -   \- FDI Inflow
 
@@ -16,13 +16,37 @@ The analysis bases on 4 variables
 
 -   \- FDI other Changes (Proxying it using net Foreign Assets)
 
--   \- GDP of Uganda
+-   \- GDP of Uganda (This is Yearly)
 
 The time period for analysis is 1960 to 2020, with this raw data having
 missing values we need to correct for the missing values statistically.
 
 Then raw data is in USD and Net foreign assets is in LCUs (local
-currency Units) which is converted to USD to make it uniform
+currency Units) which is converted to USD to make it uniform 
+
+The data is cleaned and missing values replaced and the transformation is done in Excel
+to produce the dataset used in further analysis here 
+
+-  \- Excel work book is [here](https://github.com/michaelgobz/Final-Research-Project-/blob/main/data.xlsx)
+
+**Brief About the Data in Excel File**
+A little detail about the variables contained here 
+
+-   \- FDI stock  (millions of current USD)
+
+-   \- FDI Inflow (millions of current USD)
+
+-   \- REER (Real Effective Exchange Rate)[millions of current USD]
+
+-   \- Excess of NFA (millions of current USD )
+
+-   \- GDP of Uganda (millions of current USD)
+
+The workbook has 6 sheets where sheet 1 is the raw data obtained from the World Bank.
+the next 4 sheets include a series of data cleaning and filling in missing values by interpolation, 
+and using the HP filter and try to approximate the values of the missing values. this was necessary for further analysis
+
+Sheet 6 of the workbook contains the final clenaed data ready for further analysis. 
 
 **Setting The Analysis Environment**
 
@@ -31,7 +55,7 @@ Rtools to build some of the packages download the binaries from here
 this is only for local setup
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html)
 
-Install them
+**Install the packages**
 
 ```{r install packages}
 install.packages("AER")
@@ -45,8 +69,7 @@ install.packages("urca")
 
 ```
 
-Load them into usage
-
+**Load Installed Packages**
 ```{r load the packages}
 library(AER)
 library(dynlm)
@@ -60,7 +83,7 @@ library(stats)
 
 ```
 
-Load the data in from excel
+**Load the data in from Excel*
 
 ```{r load the data in data.xlsx}
 dataset <- read_xlsx("./data.xlsx",sheet = 6 )
